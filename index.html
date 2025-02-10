@@ -10,6 +10,7 @@
             text-align: center;
             background-color: #f9e3e3;
             padding: 50px;
+            position: relative;
         }
         h1 {
             color: #d9534f;
@@ -48,33 +49,94 @@
                 transform: translateY(-20px);
             }
         }
+        a {
+            color: #5cb85c;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        /* Initial message styling */
+        #initialMessage {
+            font-size: 24px;
+            color: #d9534f;
+            opacity: 1;
+            transition: opacity 1s ease-in-out;
+        }
+        /* Hidden class for fading out */
+        .hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        /* Hidden class for buttons and question */
+        #questionSection {
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+        #questionSection.visible {
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
-    <h1>Sunny, will you be my Valentine?</h1>
-    <button id="yesButton" class="button">Yes</button>
-    <button id="noButton" class="button">No</button>
-    <p id="response"></p>
-    <div id="rose" class="rose">🌹</div> <!-- Rose emoji -->
+    <!-- Initial heartfelt message -->
+    <div id="initialMessage">
+        Sunny, you make me really happy. I feel lucky to have you as my girlfriend.
+    </div>
+
+    <!-- Question and buttons section -->
+    <div id="questionSection">
+        <h1>Will you be my Valentine?</h1>
+        <button id="yesButton" class="button">Yes</button>
+        <button id="noButton" class="button">No</button>
+        <p id="response"></p>
+        <div id="rose" class="rose">🌹</div> <!-- Rose emoji -->
+    </div>
+
+    <!-- Confetti library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <script>
+        const initialMessage = document.getElementById('initialMessage');
+        const questionSection = document.getElementById('questionSection');
         const yesButton = document.getElementById('yesButton');
         const noButton = document.getElementById('noButton');
         const response = document.getElementById('response');
         const rose = document.getElementById('rose');
 
+        // Show the initial message, then fade it out after 5 seconds
+        setTimeout(() => {
+            initialMessage.classList.add('hidden'); // Fade out the initial message
+            questionSection.classList.add('visible'); // Fade in the question and buttons
+        }, 5000); // 5-second delay
+
         yesButton.addEventListener('click', () => {
-            response.textContent = "I'll see you at Pepolino at 7:45 PM on Friday then <3";
-            rose.style.display = "block"; // Show the rose
+            // Disable the buttons to prevent multiple clicks
+            yesButton.disabled = true;
+            noButton.disabled = true;
+
+            // Wait 3 seconds before showing the message and rose
+            setTimeout(() => {
+                response.innerHTML = "I'll see you for dinner on Friday. <a href='https://g.co/kgs/5Qq6HrY' target='_blank'>Check out the restaurant here!</a>";
+                rose.style.display = "block"; // Show the rose
+
+                // Trigger confetti
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            }, 2000); // 3-second delay
         });
 
         let noClickCount = 0;
         noButton.addEventListener('click', () => {
             noClickCount++;
             if (noClickCount === 1) {
-                noButton.textContent = "Are you sure?";
-            } else if (noClickCount === 2) {
                 noButton.textContent = "Do you need 2-3 business days?";
+            } else if (noClickCount === 2) {
+                noButton.textContent = "Are you sure?";
             } else if (noClickCount >= 3) {
                 noButton.textContent = "No";
                 noClickCount = 0; // Reset the counter
